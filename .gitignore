@@ -1,0 +1,42 @@
+# User-specific files
+*.userprefs
+*.csproj.user
+*.unityproj
+Library/
+Temp/
+obj/
+*.sln
+.vs/
+.idea/
+
+# Build files
+Build/
+Builds/
+
+# Asset store packages
+Packages/
+
+# Unity cache files
+*.meta
+*.asset
+*.unity
+*.dll
+*.json
+*.xml
+*.txt
+
+# Generated files
+Assets/Plugins/Generated/
+
+# External dependencies
+Assets/Plugins/
+Assets/Editor/
+
+# External tools
+Assets/Tools/
+
+# Logs
+Logs/
+
+# User-specific settings
+ProjectSettings/
