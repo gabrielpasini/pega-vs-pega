@@ -21,7 +21,6 @@ public class SpriteAnimation : MonoBehaviour {
             this.animator.SetBool("PlayerJumping", false);
             this.animator.SetBool("PlayerDoubleJumping", false);
             this.animator.SetBool("PlayerFalling", false);
-            this.animator.SetBool("PlayerWallJumping", false);
         } else {
             float speedY = this.rigidbody.velocity.y;
             if (speedY > 0) {
@@ -35,11 +34,6 @@ public class SpriteAnimation : MonoBehaviour {
                 this.animator.SetBool("PlayerJumping", false);
                 this.animator.SetBool("PlayerDoubleJumping", false);
                 this.animator.SetBool("PlayerFalling", true);
-            }
-            if (this.player.isOnWall) {
-                this.animator.SetBool("PlayerWallJumping", true);
-            } else {
-                this.animator.SetBool("PlayerWallJumping", false);
             }
         }
     }

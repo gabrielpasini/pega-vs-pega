@@ -6,13 +6,9 @@ public class Player : MonoBehaviour {
     private Rigidbody2D rb;
     private SpriteRenderer sprite;
     public float jumpForce;
-    public float wallJumpForce;
     public bool isOnGround;
-    public bool isOnWall;
     private bool canJump;
     private bool canPress = true;
-    private float wallJumpingTimer = 0;
-    public float wallJumpingTimeout;
     public float actualJump = 0;
     public float maxJumps;
 
@@ -27,29 +23,20 @@ public class Player : MonoBehaviour {
         float moveX = Input.GetAxisRaw("Horizontal_WASD");
         Flip(moveX);
         if (Input.GetKeyDown(KeyCode.W) && canPress) {
-            canPress = false;
-            StartCoroutine(JumpDebounce());
             if (canJump && actualJump < maxJumps) {
-                rb.velocity = new Vector2(rb.velocity.x, 0f);
-                actualJump++;
-                if (isOnWall && !isOnGround) {
-                    rb.AddForce(new Vector2((moveX * -1) * wallJumpForce, wallJumpForce));
-                    wallJumpingTimer = 0f;
-                } else {
+                    actualJump++;
+                    rb.velocity = new Vector2(rb.velocity.x, 0f);
                     rb.AddForce(new Vector2(0f, jumpForce));
-                }
             } else {
                 canJump = false;
             }
         }
 
-        wallJumpingTimer += Time.deltaTime;
-        if (wallJumpingTimer > wallJumpingTimeout) {
-            rb.velocity = new Vector2(moveX * speed, rb.velocity.y);
-        }
+        rb.velocity = new Vector2(moveX * speed, rb.velocity.y);
     }
 
     public IEnumerator JumpDebounce() {
+        canPress = false;
         yield return new WaitForSeconds(0.05f);
         canPress = true;
     }
@@ -68,17 +55,11 @@ public class Player : MonoBehaviour {
             canJump = true;
             isOnGround = true;
         }
-        if (other.gameObject.tag == "WallJump") {
-            isOnWall = true;
-        }
     }
 
     private void OnCollisionExit2D(Collision2D other) {
         if (other.gameObject.tag == "CanJump") {
             isOnGround = false;
-        }
-        if (other.gameObject.tag == "WallJump") {
-            isOnWall = false;
         }
     }
 }
