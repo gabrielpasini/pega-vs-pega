@@ -30,7 +30,7 @@ public class Player : MonoBehaviour {
     void Update() {
         float moveX = Input.GetAxisRaw("Horizontal_WASD");
         Flip(moveX);
-        if (Input.GetKeyDown(KeyCode.W) && canPress) {
+        if (!isBellying && Input.GetKeyDown(KeyCode.W) && canPress) {
             if (canJump && actualJump < maxJumps) {
                     actualJump++;
                     rb.velocity = new Vector2(rb.velocity.x, 0f);
