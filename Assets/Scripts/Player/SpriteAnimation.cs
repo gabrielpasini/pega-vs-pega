@@ -9,6 +9,7 @@ public class SpriteAnimation : MonoBehaviour {
     private Rigidbody2D rigidbody;
     [SerializeField]
     private Player player;
+    private string currentState;
 
     const string PLAYER_IDLE = "Idle";
     const string PLAYER_RUN = "Run";
@@ -19,34 +20,41 @@ public class SpriteAnimation : MonoBehaviour {
     const string PLAYER_SLIDE = "Slide";
     const string PLAYER_BELLY = "Belly";
 
+    void ChangeAnimationState(string newState) {
+        if (currentState == newState) return;
+        this.animator.Play(newState);
+        currentState = newState;
+    }
+
     void Update() {
-        if (this.player.isSpinning && !this.player.isBellying && !this.player.isSliding) {
-            this.animator.Play(PLAYER_SPIN);
+        if (this.player.isSpinning && !this.player.isBellying) {
+            ChangeAnimationState(PLAYER_SPIN);
+            return;
         }
         if (this.player.isOnGround) {
             float speedX = this.rigidbody.velocity.x;
             if (speedX != 0) {
                 if (this.player.isSliding) {
-                    this.animator.Play(PLAYER_SLIDE);
+                    ChangeAnimationState(PLAYER_SLIDE);
                 } else {
-                    this.animator.Play(PLAYER_RUN);
+                    ChangeAnimationState(PLAYER_RUN);
                 }
-            } else if (!this.player.isBellying) {
-                this.animator.Play(PLAYER_IDLE);
+            } else if (!this.player.isSpinning && !this.player.isBellying && !this.player.isSliding) {
+                ChangeAnimationState(PLAYER_IDLE);
             }
         } else {
             float speedY = this.rigidbody.velocity.y;
             if (this.player.isBellying) {
-                this.animator.Play(PLAYER_BELLY);
+                ChangeAnimationState(PLAYER_BELLY);
             } else {
                 if (speedY > 0) {
                     if (this.player.actualJump == this.player.maxJumps) {
-                        this.animator.Play(PLAYER_DOUBLE_JUMP);
+                        ChangeAnimationState(PLAYER_DOUBLE_JUMP);
                     } else {
-                        this.animator.Play(PLAYER_JUMP);
+                        ChangeAnimationState(PLAYER_JUMP);
                     }
                 } else if (speedY < 0) {
-                    this.animator.Play(PLAYER_FALL);
+                    ChangeAnimationState(PLAYER_FALL);
                 }
             }
         }

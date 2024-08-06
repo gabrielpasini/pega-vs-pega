@@ -70,7 +70,7 @@ public class Player : MonoBehaviour {
             isCrouching = false;
         }
         // GIRO
-        if (Input.GetKeyDown(KeyCode.Q) && !isSpinning && canSpin) {
+        if (Input.GetKeyDown(KeyCode.Q) && !isSpinning && !isBellying && canSpin) {
             isSpinning = true;
             canSpin = false;
             StartCoroutine("spinDebounce");
