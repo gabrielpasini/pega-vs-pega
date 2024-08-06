@@ -14,6 +14,7 @@ public class Player : MonoBehaviour {
     public float jumpSlidingForce;
     public bool isSpinning;
     public bool isSliding;
+    public bool isCrouching;
     public bool isBellying;
     public bool isOnGround;
     private bool canJump;
@@ -30,7 +31,8 @@ public class Player : MonoBehaviour {
     void Update() {
         float moveX = Input.GetAxisRaw("Horizontal_WASD");
         Flip(moveX);
-        if (!isBellying && Input.GetKeyDown(KeyCode.W) && canPress) {
+        if (Input.GetKeyDown(KeyCode.W) && !isBellying && canPress) {
+            // PULO
             if (canJump && actualJump < maxJumps) {
                     actualJump++;
                     rb.velocity = new Vector2(rb.velocity.x, 0f);
@@ -43,25 +45,43 @@ public class Player : MonoBehaviour {
                 canJump = false;
             }
         }
-        if (!isSliding && Input.GetKeyDown(KeyCode.F)) {
+        if (Input.GetKeyDown(KeyCode.F) && !isSliding) {
+
+            // SLIDE
             if (isOnGround && rb.velocity.x != 0) {
                 isSliding = true;
                 rb.AddForce(new Vector2(slideSpeed * moveX, 0f));
                 StartCoroutine("stopSlide");
             }
+            // BARRIGADA
             if (!isBellying && !isOnGround) {
                 isBellying = true;
                 rb.velocity = new Vector2(rb.velocity.x, 0f);
                 StartCoroutine("performBelly");
             }
         }
-        if (!isSpinning && Input.GetKeyDown(KeyCode.Q)) {
+        if (Input.GetKey(KeyCode.F) && isOnGround) {
+            // AGACHAR INICIO
+            if (rb.velocity.x == 0) {
+                isCrouching = true;
+            }
+        } else {
+            // AGACHAR FIM
+            isCrouching = false;
+        }
+        // GIRO
+        if (Input.GetKeyDown(KeyCode.Q) && !isSpinning) {
             isSpinning = true;
             StartCoroutine("stopSpinning");
         }
 
+        // MOVIMENTAÇÃO
         if (!isSliding && !isBellying) {
-            rb.velocity = new Vector2(moveX * speed, rb.velocity.y);
+            if (isCrouching) {
+                rb.velocity = new Vector2(moveX * speed / 2, rb.velocity.y);
+            } else {
+                rb.velocity = new Vector2(moveX * speed, rb.velocity.y);
+            }
         }
     }
 
