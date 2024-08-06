@@ -18,7 +18,7 @@ public class Player : MonoBehaviour {
     public bool isBellying;
     public bool isOnGround;
     private bool canJump;
-    private bool canPress = true;
+    private bool canSpin = true;
     public float actualJump = 0;
     public float maxJumps;
 
@@ -31,7 +31,7 @@ public class Player : MonoBehaviour {
     void Update() {
         float moveX = Input.GetAxisRaw("Horizontal_WASD");
         Flip(moveX);
-        if (Input.GetKeyDown(KeyCode.W) && !isBellying && canPress) {
+        if (Input.GetKeyDown(KeyCode.W) && !isBellying) {
             // PULO
             if (canJump && actualJump < maxJumps) {
                     actualJump++;
@@ -70,8 +70,10 @@ public class Player : MonoBehaviour {
             isCrouching = false;
         }
         // GIRO
-        if (Input.GetKeyDown(KeyCode.Q) && !isSpinning) {
+        if (Input.GetKeyDown(KeyCode.Q) && !isSpinning && canSpin) {
             isSpinning = true;
+            canSpin = false;
+            StartCoroutine("spinDebounce");
             StartCoroutine("stopSpinning");
         }
 
@@ -89,10 +91,17 @@ public class Player : MonoBehaviour {
         yield return new WaitForSeconds(slideDuration);
         isSliding = false;
     }
+
     private IEnumerator stopSpinning() {
         yield return new WaitForSeconds(spinDuration);
         isSpinning = false;
     }
+
+    private IEnumerator spinDebounce() {
+        yield return new WaitForSeconds(0.5f);
+        canSpin = true;
+    }
+
     private IEnumerator performBelly() {
         rb.velocity = new Vector2(0f, rb.velocity.y);
         rb.AddForce(new Vector2(0f, jumpForce * 0.5f));
@@ -103,14 +112,6 @@ public class Player : MonoBehaviour {
     private IEnumerator stopBelly() {
         yield return new WaitForSeconds(bellyStunDuration);
         isBellying = false;
-    }
-
-
-
-    private IEnumerator JumpDebounce() {
-        canPress = false;
-        yield return new WaitForSeconds(0.05f);
-        canPress = true;
     }
 
     private void Flip(float horizontal) {
